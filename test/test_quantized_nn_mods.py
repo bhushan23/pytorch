@@ -281,8 +281,12 @@ class ModuleAPITest(QuantizationTestCase):
             self.assertEqual(model_dict[key], loaded_dict[key])
         if use_fused:
             loaded_qlinear = nnq_fused.LinearReLU(in_features, out_features)
+
+            self.assertTrue('QuantizedLinearReLU' in str(qlinear))
         else:
             loaded_qlinear = nnq.Linear(in_features, out_features)
+
+            self.assertTrue('QuantizedLinear' in str(qlinear))
         loaded_qlinear.load_state_dict(loaded_dict)
 
         linear_unpack = torch.ops.quantized.linear_unpack
@@ -470,6 +474,8 @@ class ModuleAPITest(QuantizationTestCase):
                                                 groups=g,
                                                 bias=use_bias,
                                                 padding_mode='zeros')
+
+            self.assertTrue('QuantizedConvReLU2d' in str(loaded_conv_under_test))
         else:
             loaded_conv_under_test = Conv2d(in_channels=iC,
                                             out_channels=oC,
@@ -480,6 +486,8 @@ class ModuleAPITest(QuantizationTestCase):
                                             groups=g,
                                             bias=use_bias,
                                             padding_mode='zeros')
+
+            self.assertTrue('QuantizedConv2d' in str(loaded_conv_under_test))
         loaded_conv_under_test.load_state_dict(loaded_dict)
         self.assertEqual(loaded_conv_under_test._weight_bias(), conv_under_test._weight_bias())
         if use_bias:
