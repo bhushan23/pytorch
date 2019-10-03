@@ -113,6 +113,14 @@ inline int64_t Tensor::_version() const {
     return table->callUnboxed<int64_t, const Tensor &>(const_cast<Tensor&>(*this));
 #endif
 }
+inline Tensor & Tensor::requires_grad_(bool _requires_grad) const {
+#ifdef USE_STATIC_DISPATCH
+    return TypeDefault::requires_grad_(const_cast<Tensor&>(*this), _requires_grad);
+#else
+    static auto table = globalATenDispatch().getOpTable("aten::requires_grad_(Tensor(a!) self, bool _requires_grad=True) -> Tensor(a!)");
+    return table->getOp<Tensor & (Tensor &, bool)>(at::detail::multi_dispatch_tensor_type_set(*this))(const_cast<Tensor&>(*this), _requires_grad);
+#endif
+}
 #ifdef BUILD_NAMEDTENSOR
 inline Tensor & Tensor::rename_(c10::optional<DimnameList> names) const {
 #ifdef USE_STATIC_DISPATCH
