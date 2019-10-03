@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import copy
+import itertools
 import torch
 import torch.nn as nn
 import torch.nn._intrinsic as nni
@@ -278,8 +279,8 @@ def quantize_dynamic(model, qconfig_spec=None, dtype=torch.qint8, mapping=DEFAUL
     For simplest usage provide `dtype` argument that can be float16 or qint8. Weight-only quantization
     by default is performed for layers with large weights size - i.e. Linear and RNN variants.
 
-    Fine grained control is possible with `qconfig_dict` and `mapping` that act similarly to `quantize()`.
-    If `qconfig_dict` is provided, the `dtype` argument is ignored.
+    Fine grained control is possible with `qconfig` and `mapping` that act similarly to `quantize()`.
+    If `qconfig` is provided, the `dtype` argument is ignored.
 
     Args:
         module: input model
